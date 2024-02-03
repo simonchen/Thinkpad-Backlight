@@ -33,25 +33,25 @@ namespace Thinkpad_Backlight
             if (Settings.Default.EnableAtStartup)
                 keyboardController.ToggleBacklight(allowInTerminalServerSession: false);
 
-            var brightMenuItem = new MenuItem("On: Bright");
-            var dimMenuItem = new MenuItem("On: Dim");
-            var timerMenuItem = new MenuItem("Timer") { Checked = Settings.Default.Timer };
-            var keypressMenuItem = new MenuItem("Monitor key presses") { Checked = Settings.Default.MonitorKeys };
-            var settingsMenuItem = new MenuItem(text: "Settings") /* { BarBreak = true }*/;
+            var brightMenuItem = new MenuItem("开启键盘背光：明亮");
+            var dimMenuItem = new MenuItem("开启键盘背光：昏暗");
+            var timerMenuItem = new MenuItem("定时检查按键活动") { Checked = Settings.Default.Timer };
+            var keypressMenuItem = new MenuItem("监视按键操作") { Checked = Settings.Default.MonitorKeys };
+            var settingsMenuItem = new MenuItem(text: "设置") /* { BarBreak = true }*/;
 
             _trayIcon = new NotifyIcon
             {
                 Icon = Properties.Resources.TrayIcon,
                 ContextMenu = new ContextMenu(menuItems: new[]
                 {
-                    brightMenuItem,
+                    brightMenuItem, 
                     dimMenuItem,
-                    new MenuItem(text: "Off", onClick: (_, __) => keyboardController.ToggleBacklight(KeyboardBrightness.Off, allowInTerminalServerSession: true)),
-                    timerMenuItem,
-                    keypressMenuItem,
+                    new MenuItem(text: "关闭键盘背光", onClick: (_, __) => keyboardController.ToggleBacklight(KeyboardBrightness.Off, allowInTerminalServerSession: true)),
+                    //timerMenuItem,
+                    //keypressMenuItem,
                     new MenuItem("-"), // or use BarBreak instead, on the next item, to seperate vertically
                     settingsMenuItem,
-                    new MenuItem(text: "Exit", onClick: (_, __) => Application.Exit())
+                    new MenuItem(text: "退出", onClick: (_, __) => Application.Exit())
                 }),
                 Visible = false,
                 Text = "Thinkpad Backlight"

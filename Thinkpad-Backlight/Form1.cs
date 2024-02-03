@@ -115,11 +115,11 @@ namespace Thinkpad_Backlight
                     timer1.Stop();
                 }
                 else
-                {
+                { 
                     timerMenuItem.Checked = true;
                     Settings.Default.Timer = true;
                     timer1.Stop();
-                    timer1.Start();
+                    timer1.Start();   
                 }
 
                 Settings.Default.Save();
@@ -168,15 +168,22 @@ namespace Thinkpad_Backlight
                 // Note: for the application hook, use the Hook.AppEvents() instead
                 _globalHook = Hook.GlobalEvents();
                 _globalHook.KeyDown += GlobalHookOnKeyDown;
+                _globalHook.MouseMove += GlobalHookOnMouse;
+                _globalHook.MouseDown += GlobalHookOnMouse;
+                _globalHook.MouseWheel += GlobalHookOnMouse;
             }
         }
 
         private void GlobalHookOnKeyDown(object sender, KeyEventArgs e)
         {
+            timer1.Reset(); // First reset , otherwise, light is on then off .. 
             if (e.KeyCode != Keys.None /* issue 1 */)
                 _keyboardController.ToggleBacklight(allowInTerminalServerSession: false);
+        }
 
-            timer1.Reset();
+        private void GlobalHookOnMouse(object sender, MouseEventArgs e)
+        {
+            timer1.Reset(); // First reset , otherwise, light is on then off .. 
         }
 
         private void UnsubscribeFromKeyDownEvents()
@@ -184,6 +191,9 @@ namespace Thinkpad_Backlight
             if (_globalHook != null)
             {
                 _globalHook.KeyDown -= GlobalHookOnKeyDown;
+                _globalHook.MouseMove -= GlobalHookOnMouse;
+                _globalHook.MouseDown -= GlobalHookOnMouse;
+                _globalHook.MouseWheel -= GlobalHookOnMouse;
                 _globalHook.Dispose();
             }
         }
@@ -200,6 +210,7 @@ namespace Thinkpad_Backlight
         {
             _keypressMenuItem.Enabled = false;
             _timerMenuItem.Enabled = false;
+            TimerCheckBox.Checked = Settings.Default.Timer;
 
             // If we are already showing the window, merely focus it.
             if (Visible)

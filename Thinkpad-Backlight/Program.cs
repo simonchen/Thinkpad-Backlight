@@ -19,6 +19,7 @@ along with Thinkpad-Backlight.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Thinkpad_Backlight
@@ -31,6 +32,15 @@ namespace Thinkpad_Backlight
         [STAThread]
         private static void Main()
         {
+            bool createdNew;
+            Mutex m = new Mutex(true, "Thinkpad-Backlight", out createdNew);
+            if (!createdNew)
+            {
+                // myApp is already running...
+                //MessageBox.Show("DellFanManagementApp is already running!", "Multiple Instances");
+                return;
+            }
+
             AppDomain.CurrentDomain.UnhandledException += (sender, args) => HandleUnhandledException(args.ExceptionObject as Exception);
             Application.ThreadException += (sender, args) => HandleUnhandledException(args.Exception);
 

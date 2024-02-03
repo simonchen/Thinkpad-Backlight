@@ -51,8 +51,23 @@ namespace Thinkpad_Backlight
 
             _setKeyboardBackLightStatusFunc = level =>
             { 
-                var arguments = new object[] { level };
-                return (uint)_setKeyboardBackLightStatusInfo.Invoke(keyboardControlInstance, arguments);
+                 var arguments = new object[] { level };
+                try   
+                {
+                    return (uint)_setKeyboardBackLightStatusInfo.Invoke(keyboardControlInstance, arguments);
+                }
+                catch(Exception ex)
+                {
+                    try
+                    {
+                        var arguments2 = new object[] { level, null };
+                        return (uint)_setKeyboardBackLightStatusInfo.Invoke(keyboardControlInstance, arguments2);
+                    }catch(Exception ex2)
+                    {
+
+                    }
+                }
+                return 0;
             };
 
             _getKeyboardBackLightStatusFunc = (out int level) =>
@@ -70,9 +85,21 @@ namespace Thinkpad_Backlight
             try
             {
                 return Assembly.LoadFile($"{Settings.Default.DllPath}\\{dllName}");
-            }
+            } 
             catch (FileNotFoundException)
             {
+                string[] files = Directory.GetFiles("C:\\Program Files (x86)\\Lenovo\\PCManager", dllName, SearchOption.AllDirectories);
+                string dllpath = "";
+                for (int i = 0; i<files.Length; i++)
+                {
+                    string filepath = files[i];
+                    if (filepath.IndexOf("x64") >= 0) continue;
+                    dllpath = filepath;
+                }
+                if (dllpath.Length > 0)
+                {
+                    return Assembly.LoadFile(dllpath);
+                }
                 MessageBox.Show($"Lenovo {dllName} not found. Please find the file and edit the " + nameof(Settings.Default.DllPath) + " setting in this program's app.config file to point to the correct folder location.");
                 throw;
             }
@@ -98,7 +125,7 @@ namespace Thinkpad_Backlight
 
         private void ToggleBacklight(int level, bool allowInTerminalServerSession)
         {
-            if (allowInTerminalServerSession || !SystemInformation.TerminalServerSession /* Don't turn backlight on automatically if connected to the machine over RDC */)
+             if (allowInTerminalServerSession || !SystemInformation.TerminalServerSession /* Don't turn backlight on automatically if connected to the machine over RDC */)
             {
                 _getKeyboardBackLightStatusFunc(out int currentLevel);
 
