@@ -74,8 +74,27 @@ namespace Thinkpad_Backlight
             {
                 level = -1;
                 var arguments = new object[] { level };
-                uint r = (uint)_getKeyboardBackLightStatusInfo.Invoke(keyboardControlInstance, arguments);
-                level = (int)arguments[0];
+                //uint r = (uint)_getKeyboardBackLightStatusInfo.Invoke(keyboardControlInstance, arguments);
+                //level = (int)arguments[0];
+                uint r = 0;
+                try
+                {
+                    r = (uint)_getKeyboardBackLightStatusInfo.Invoke(keyboardControlInstance, arguments);
+                    level = (int)arguments[0];
+                }
+                catch (Exception ex)
+                {
+                    try
+                    {
+                        var arguments2 = new object[] { level, null };
+                        r = (uint)_getKeyboardBackLightStatusInfo.Invoke(keyboardControlInstance, arguments2);
+                        level = (int)arguments[0];
+                    }
+                    catch (Exception ex2)
+                    {
+
+                    }
+                }
                 return r;
             };
         }
