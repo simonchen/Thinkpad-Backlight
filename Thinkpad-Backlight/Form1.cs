@@ -167,11 +167,11 @@ namespace Thinkpad_Backlight
             {
                 // Note: for the application hook, use the Hook.AppEvents() instead
                 _globalHook = Hook.GlobalEvents();
-                _globalHook.KeyDown += GlobalHookOnKeyDown;
-                _globalHook.MouseMove += GlobalHookOnMouse;
-                _globalHook.MouseDown += GlobalHookOnMouse;
-                _globalHook.MouseWheel += GlobalHookOnMouse;
             }
+            _globalHook.KeyDown += GlobalHookOnKeyDown;
+            _globalHook.MouseMove += GlobalHookOnMouse;
+            _globalHook.MouseDown += GlobalHookOnMouse;
+            _globalHook.MouseWheel += GlobalHookOnMouse;
         }
 
         private void GlobalHookOnKeyDown(object sender, KeyEventArgs e)
@@ -195,6 +195,7 @@ namespace Thinkpad_Backlight
                 _globalHook.MouseDown -= GlobalHookOnMouse;
                 _globalHook.MouseWheel -= GlobalHookOnMouse;
                 _globalHook.Dispose();
+                _globalHook = null;
             }
         }
 
